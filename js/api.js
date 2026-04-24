@@ -37,9 +37,9 @@ async function getSiteId() {
 
 async function searchAssemblies(query) {
     const siteId = await getSiteId();
-    const encoded = encodeURIComponent(query);
+    const esc = query.replace(/'/g, "''");
     const url = `${GRAPH}/sites/${siteId}/lists/Assemblies/items` +
-        `?$search="${encoded}"` +
+        `?$filter=startswith(fields/AssemblyNumber,'${esc}') or startswith(fields/Title,'${esc}') or startswith(fields/ClientName,'${esc}')` +
         `&$expand=fields($select=Title,AssemblyNumber,AssemblyType,Revision,ClientP_x002f_N,ClientName)` +
         `&$top=100`;
     const data = await graphFetch(url);
@@ -93,9 +93,9 @@ async function updateCounter(itemId, newNumber) {
 async function searchClients(query) {
     if (!query || query.length < 2) return [];
     const siteId = await getSiteId();
-    const encoded = encodeURIComponent(query);
+    const esc = query.replace(/'/g, "''");
     const url = `${GRAPH}/sites/${siteId}/lists/Assembly Drawing Client List/items` +
-        `?$search="${encoded}"` +
+        `?$filter=startswith(fields/Title,'${esc}')` +
         `&$expand=fields($select=Title,FPEAccount)` +
         `&$top=20`;
     const data = await graphFetch(url);
