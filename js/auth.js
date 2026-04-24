@@ -1,7 +1,7 @@
 const msalConfig = {
     auth: {
         clientId: 'f3e17927-201a-4e5a-a71d-9dcee3193bb4',
-        authority: 'https://login.microsoftonline.com/eb6d316c-6482-464f-8290-f2ddee200fea',
+        authority: 'https://login.microsoftonline.com/fpeautomation0.onmicrosoft.com',
         redirectUri: window.location.origin
     },
     cache: {
