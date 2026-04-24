@@ -42,7 +42,7 @@ async function searchAssemblies(query) {
         `?$filter=startswith(fields/AssemblyNumber,'${esc}') or startswith(fields/Title,'${esc}') or startswith(fields/ClientName,'${esc}')` +
         `&$expand=fields($select=Title,AssemblyNumber,AssemblyType,Revision,ClientP_x002f_N,ClientName)` +
         `&$top=100`;
-    const data = await graphFetch(url);
+    const data = await graphFetch(url, { headers: { Prefer: 'HonorNonIndexedQueriesWarningMayFailRandomly' } });
     return data.value || [];
 }
 
@@ -98,6 +98,6 @@ async function searchClients(query) {
         `?$filter=startswith(fields/Title,'${esc}')` +
         `&$expand=fields($select=Title,FPEAccount)` +
         `&$top=20`;
-    const data = await graphFetch(url);
+    const data = await graphFetch(url, { headers: { Prefer: 'HonorNonIndexedQueriesWarningMayFailRandomly' } });
     return data.value || [];
 }
