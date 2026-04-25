@@ -100,11 +100,11 @@ async function updateCounter(itemId, newNumber) {
 async function searchClients(query) {
     if (!query || query.length < 2) return [];
     const siteId = await getSiteId();
-    const encoded = encodeURIComponent(query);
+    const esc = query.replace(/'/g, "''");
     const url = `${GRAPH}/sites/${siteId}/lists/Assembly Drawing Client List/items` +
-        `?$search="${encoded}"` +
+        `?$filter=${encodeURIComponent(`startswith(fields/Title,'${esc}')`)}` +
         `&$expand=fields($select=Title,FPEAccount)` +
         `&$top=20`;
-    const data = await graphFetch(url);
+    const data = await graphFetch(url, { headers: { Prefer: 'HonorNonIndexedQueriesWarningMayFailRandomly' } });
     return data.value || [];
 }
