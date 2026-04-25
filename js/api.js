@@ -46,6 +46,7 @@ async function searchAssemblies(query) {
     ].join(' or ');
     const url = `${GRAPH}/sites/${siteId}/lists/Assemblies/items` +
         `?$filter=${encodeURIComponent(filter)}` +
+        `&$orderby=fields/AssemblyNumber desc` +
         `&$expand=fields($select=Title,AssemblyNumber,AssemblyType,Revision,ClientP_x002f_N,ClientName)` +
         `&$top=100`;
     const data = await graphFetch(url, { headers: { Prefer: 'HonorNonIndexedQueriesWarningMayFailRandomly' } });
