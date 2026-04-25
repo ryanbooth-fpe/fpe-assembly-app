@@ -41,7 +41,10 @@ async function getCurrentUser() {
 }
 
 async function login() {
-    const response = await msalInstance.loginPopup(loginRequest);
+    const response = await msalInstance.loginPopup({
+        ...loginRequest,
+        redirectUri: window.location.origin + '/auth.html'
+    });
     return response.account;
 }
 

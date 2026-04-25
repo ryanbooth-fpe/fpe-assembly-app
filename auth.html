@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><title>Auth</title></head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js"></script>
+<script>
+    const msalInstance = new msal.PublicClientApplication({
+        auth: {
+            clientId: 'f3e17927-201a-4e5a-a71d-9dcee3193bb4',
+            authority: 'https://login.microsoftonline.com/fpeautomation0.onmicrosoft.com',
+            redirectUri: window.location.href
+        }
+    });
+    msalInstance.handleRedirectPromise().catch(console.error);
+</script>
+</body>
+</html>
