@@ -254,7 +254,7 @@ async function saveAssembly() {
             const assemblyNumber = `${type}-${newNum}`;
 
             await updateCounter(counterData.id, newNum);
-            await createAssembly({
+            currentAssembly = await createAssembly({
                 Title: title,
                 AssemblyNumber: assemblyNumber,
                 AssemblyType: type,
