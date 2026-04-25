@@ -37,12 +37,19 @@ async function getSiteId() {
 
 async function searchAssemblies(query) {
     const siteId = await getSiteId();
-    const encoded = encodeURIComponent(query);
+    const esc = query.replace(/'/g, "''");
+    const types = ['EBA', 'FPE', 'FPEVAS', 'FPEHS', 'SMA'];
+    const filter = [
+        `startswith(fields/AssemblyNumber,'${esc}')`,
+        ...types.map(t => `startswith(fields/AssemblyNumber,'${t}-${esc}')`),
+        `startswith(fields/Title,'${esc}')`,
+        `startswith(fields/ClientName,'${esc}')`
+    ].join(' or ');
     const url = `${GRAPH}/sites/${siteId}/lists/Assemblies/items` +
-        `?$search="${encoded}"` +
+        `?$filter=${encodeURIComponent(filter)}` +
         `&$expand=fields($select=Title,AssemblyNumber,AssemblyType,Revision,ClientP_x002f_N,ClientName)` +
         `&$top=100`;
-    const data = await graphFetch(url);
+    const data = await graphFetch(url, { headers: { Prefer: 'HonorNonIndexedQueriesWarningMayFailRandomly' } });
     return data.value || [];
 }
 
