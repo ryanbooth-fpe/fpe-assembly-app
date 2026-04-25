@@ -10,6 +10,11 @@ let clientDebounce = null;
 // ── Init ─────────────────────────────────────────────────────
 
 async function init() {
+    // If this is the MSAL popup window, just process the redirect and stop
+    if (window.opener && window.opener !== window) {
+        await msalInstance.handleRedirectPromise();
+        return;
+    }
     await msalInstance.handleRedirectPromise();
     const user = await getCurrentUser();
     user ? showApp(user) : showLogin();
