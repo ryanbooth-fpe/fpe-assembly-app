@@ -42,8 +42,7 @@ async function searchAssemblies(query) {
     const filter = [
         `startswith(fields/AssemblyNumber,'${esc}')`,
         ...types.map(t => `startswith(fields/AssemblyNumber,'${t}-${esc}')`),
-        `startswith(fields/Title,'${esc}')`,
-        `startswith(fields/ClientName,'${esc}')`
+        `startswith(fields/Title,'${esc}')`
     ].join(' or ');
     const url = `${GRAPH}/sites/${siteId}/lists/Assemblies/items` +
         `?$filter=${encodeURIComponent(filter)}` +
