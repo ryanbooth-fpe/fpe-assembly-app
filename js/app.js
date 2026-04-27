@@ -6,6 +6,7 @@ let nextNumber = null;
 let selectedClientName = null;
 let searchDebounce = null;
 let clientDebounce = null;
+const localCache = new Map(); // id → item, for items created/edited this session
 
 // ── Init ─────────────────────────────────────────────────────
 
@@ -107,7 +108,16 @@ async function runSearch(query) {
 
     try {
         const items = await searchAssemblies(query);
-        renderList(items);
+        // Merge local cache: inject items that match but aren't in API results yet
+        const q = query.toLowerCase();
+        const apiIds = new Set(items.map(i => i.id));
+        const localMatches = [...localCache.values()].filter(i => {
+            const f = i.fields;
+            return (f.AssemblyNumber || '').toLowerCase().includes(q) ||
+                   (f.Title || '').toLowerCase().includes(q);
+        });
+        const merged = [...localMatches.filter(i => !apiIds.has(i.id)), ...items];
+        renderList(merged);
     } catch (e) {
         list.innerHTML = `<div class="list-empty">Error: ${e.message}</div>`;
     }
@@ -263,6 +273,7 @@ async function saveAssembly() {
                 ClientName: clientName
             });
 
+            localCache.set(currentAssembly.id, currentAssembly);
             showToast(`Created ${assemblyNumber}`, 'success');
 
         } else if (isEditMode && currentAssembly) {
@@ -276,6 +287,7 @@ async function saveAssembly() {
 
             // Refresh detail
             currentAssembly = await getAssembly(currentAssembly.id);
+            localCache.set(currentAssembly.id, currentAssembly);
             showToast('Assembly updated', 'success');
         }
 
@@ -336,6 +348,7 @@ async function confirmDelete() {
     if (!currentAssembly) return;
     try {
         await deleteAssembly(currentAssembly.id);
+        localCache.delete(currentAssembly.id);
         hideDeleteModal();
 
         const q = document.getElementById('search-input').value;
